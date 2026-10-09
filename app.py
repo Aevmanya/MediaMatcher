@@ -243,45 +243,40 @@ with st.sidebar:
         )
         st.session_state.route = selected_page
 
-# Reset scroll position when navigation changes. The component runs in an
-# iframe, so target the parent Streamlit document and its likely scroll containers.
+# Reset Streamlit's dedicated main-content scroller when the selected page changes.
+# The scrollable area is usually the element with data-testid="stMain", not the window.
 if st.session_state.get("previous_route") != st.session_state.route:
     st.components.v1.html(
         """
         <script>
         (() => {
-          const resetScroll = () => {
+          const resetMainScroller = () => {
             try {
               const doc = window.parent.document;
-              const selectors = [
-                '[data-testid="stMain"]',
-                '[data-testid="stAppViewContainer"]',
-                '[data-testid="stMainBlockContainer"]',
-                'section.main',
-                '.main',
-                'body',
-                'html'
-              ];
-              for (const selector of selectors) {
-                doc.querySelectorAll(selector).forEach((el) => {
-                  el.scrollTop = 0;
-                  el.scrollLeft = 0;
+              const main = doc.querySelector('[data-testid="stMain"]');
+              const appView = doc.querySelector('[data-testid="stAppViewContainer"]');
+              const mainSection = doc.querySelector('section.main');
+              [main, appView, mainSection].filter(Boolean).forEach((el) => {
+                el.scrollTop = 0;
+                if (typeof el.scrollTo === 'function') el.scrollTo(0, 0);
+              });
+              // Streamlit versions can put the actual scrolling overflow on a child.
+              if (main) {
+                main.querySelectorAll('*').forEach((el) => {
+                  const style = window.parent.getComputedStyle(el);
+                  if (/(auto|scroll)/.test(style.overflowY) && el.scrollHeight > el.clientHeight) {
+                    el.scrollTop = 0;
+                  }
                 });
               }
-              if (doc.scrollingElement) {
-                doc.scrollingElement.scrollTop = 0;
-                doc.scrollingElement.scrollLeft = 0;
-              }
-              window.parent.scrollTo(0, 0);
             } catch (e) {
               window.scrollTo(0, 0);
             }
           };
-          resetScroll();
-          requestAnimationFrame(resetScroll);
-          requestAnimationFrame(() => requestAnimationFrame(resetScroll));
-          setTimeout(resetScroll, 80);
-          setTimeout(resetScroll, 250);
+          resetMainScroller();
+          requestAnimationFrame(resetMainScroller);
+          requestAnimationFrame(() => requestAnimationFrame(resetMainScroller));
+          setTimeout(resetMainScroller, 150);
         })();
         </script>
         """,
