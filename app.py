@@ -495,8 +495,25 @@ st.markdown(
     [data-testid="stSidebar"] [aria-current="page"], [data-testid="stSidebar"] a[aria-selected="true"] { background:#332b20 !important; border-left:3px solid #d6a85c !important; }
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 { color:#f0c879 !important; }
     .stApp::before { content:""; display:block; height:3px; width:100%; background:linear-gradient(90deg,#7b3c42 0%,#d6a85c 52%,#286c68 100%); }
-    [data-testid="stSidebar"] { background:#17181d; border-right:1px solid #2b2c32; }
+    /* Force Streamlit's sidebar surfaces and option-menu component into the dark theme. */
+    [data-testid="stSidebar"],
+    [data-testid="stSidebar"] > div,
+    [data-testid="stSidebar"] [data-testid="stSidebarContent"],
+    [data-testid="stSidebar"] [data-testid="stVerticalBlock"],
+    [data-testid="stSidebar"] [data-testid="stElementContainer"] { background-color:#17181d !important; }
+    [data-testid="stSidebar"] { border-right:1px solid #2b2c32 !important; }
+    [data-testid="stSidebar"] .nav,
+    [data-testid="stSidebar"] .nav-pills,
+    [data-testid="stSidebar"] .nav-item { background-color:transparent !important; }
+    [data-testid="stSidebar"] .nav-link,
+    [data-testid="stSidebar"] a.nav-link,
+    [data-testid="stSidebar"] button.nav-link { background-color:#202126 !important; color:#d8d2c8 !important; border:1px solid #303137 !important; border-radius:10px !important; margin:3px 0 !important; }
+    [data-testid="stSidebar"] .nav-link:hover { background-color:#2a2927 !important; color:#f0c879 !important; border-color:#8c7044 !important; }
+    [data-testid="stSidebar"] .nav-link.active,
+    [data-testid="stSidebar"] .nav-link[aria-current="page"] { background-color:#332b20 !important; color:#f0c879 !important; border-left:3px solid #d6a85c !important; }
     [data-testid="stSidebar"] * { color:#f4f0e8; }
+    [data-testid="stSidebar"] .nav-link, [data-testid="stSidebar"] .nav-link * { color:#d8d2c8 !important; }
+    [data-testid="stSidebar"] .nav-link.active, [data-testid="stSidebar"] .nav-link.active * { color:#f0c879 !important; }
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color:#b5b0a7; }
     [data-testid="stSidebar"] [data-testid="stAlert"] { background:#24252a; border:1px solid #37383e; }
     h1,h2,h3 { letter-spacing:-.04em; color:#f4f0e8; } h1 { font-weight:850 !important; }
