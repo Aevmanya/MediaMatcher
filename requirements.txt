@@ -1,0 +1,5 @@
+streamlit
+streamlit-option-menu
+requests
+mysql-connector-python
+urllib3
