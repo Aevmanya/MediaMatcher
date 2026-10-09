@@ -243,6 +243,33 @@ with st.sidebar:
         )
         st.session_state.route = selected_page
 
+# Streamlit keeps the main document's scroll position across reruns. Reset it
+# only when the selected page changes, so ordinary interactions don't jump up.
+if st.session_state.get("previous_route") != st.session_state.route:
+    st.components.v1.html(
+        """
+        <script>
+          const resetParentScroll = () => {
+            try {
+              const doc = window.parent.document;
+              const main = doc.querySelector('[data-testid="stAppViewContainer"]');
+              const content = doc.querySelector('[data-testid="stMain"]');
+              if (main) main.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+              if (content) content.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+              window.parent.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+            } catch (e) {
+              window.scrollTo(0, 0);
+            }
+          };
+          resetParentScroll();
+          requestAnimationFrame(resetParentScroll);
+        </script>
+        """,
+        height=0,
+        width=0,
+    )
+    st.session_state.previous_route = st.session_state.route
+
 if (
     st.session_state.logged_in
     and not is_preferences_complete(st.session_state.preferences)
