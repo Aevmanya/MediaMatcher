@@ -243,30 +243,50 @@ with st.sidebar:
         )
         st.session_state.route = selected_page
 
-# Streamlit keeps the main document's scroll position across reruns. Reset it
-# only when the selected page changes, so ordinary interactions don't jump up.
+# Reset scroll position when navigation changes. The component runs in an
+# iframe, so target the parent Streamlit document and its likely scroll containers.
 if st.session_state.get("previous_route") != st.session_state.route:
     st.components.v1.html(
         """
         <script>
-          const resetParentScroll = () => {
+        (() => {
+          const resetScroll = () => {
             try {
               const doc = window.parent.document;
-              const main = doc.querySelector('[data-testid="stAppViewContainer"]');
-              const content = doc.querySelector('[data-testid="stMain"]');
-              if (main) main.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-              if (content) content.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-              window.parent.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+              const selectors = [
+                '[data-testid="stMain"]',
+                '[data-testid="stAppViewContainer"]',
+                '[data-testid="stMainBlockContainer"]',
+                'section.main',
+                '.main',
+                'body',
+                'html'
+              ];
+              for (const selector of selectors) {
+                doc.querySelectorAll(selector).forEach((el) => {
+                  el.scrollTop = 0;
+                  el.scrollLeft = 0;
+                });
+              }
+              if (doc.scrollingElement) {
+                doc.scrollingElement.scrollTop = 0;
+                doc.scrollingElement.scrollLeft = 0;
+              }
+              window.parent.scrollTo(0, 0);
             } catch (e) {
               window.scrollTo(0, 0);
             }
           };
-          resetParentScroll();
-          requestAnimationFrame(resetParentScroll);
+          resetScroll();
+          requestAnimationFrame(resetScroll);
+          requestAnimationFrame(() => requestAnimationFrame(resetScroll));
+          setTimeout(resetScroll, 80);
+          setTimeout(resetScroll, 250);
+        })();
         </script>
         """,
-        height=0,
-        width=0,
+        height=1,
+        width=1,
     )
     st.session_state.previous_route = st.session_state.route
 
