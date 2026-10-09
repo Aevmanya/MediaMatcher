@@ -478,27 +478,43 @@ def display_movie_box(
 st.markdown(
     """
     <style>
-    .stApp { background: radial-gradient(ellipse at top left, rgba(91,54,145,.20), transparent 42%), linear-gradient(180deg,#111018 0%,#0c0b10 100%); color: #f4f1fa; }
-    [data-testid="stHeader"] { background: rgba(12,11,16,.82); }
-    [data-testid="stSidebar"] { background: linear-gradient(180deg,#191522 0%,#100f16 100%); border-right: 1px solid rgba(190,160,255,.14); }
-    h1,h2,h3 { letter-spacing: -.035em; } h1 { font-weight: 800 !important; }
-    [data-testid="stButton"] button { border-radius: 12px; border: 1px solid rgba(186,154,255,.34); transition: transform .15s ease,border-color .15s ease; }
-    [data-testid="stButton"] button:hover { border-color: #b99aff; transform: translateY(-1px); }
-    [data-testid="stTextInput"] input,[data-testid="stTextArea"] textarea,[data-testid="stNumberInput"] input { border-radius: 10px; }
-    .movie-card { background: linear-gradient(135deg,rgba(36,31,48,.98),rgba(23,21,30,.98)); border: 1px solid rgba(190,170,230,.16); border-radius: 18px; padding: 18px; margin-bottom: 16px; display: flex; gap: 18px; box-shadow: 0 12px 32px rgba(0,0,0,.18); color: #f4f1fa; transition: border-color .18s ease,transform .18s ease; }
-    .movie-card:hover { border-color: rgba(185,154,255,.5); transform: translateY(-2px); }
-    .movie-card.recommended { background: linear-gradient(135deg,rgba(53,37,76,.98),rgba(27,23,38,.98)); border-left: 4px solid #b99aff; }
-    .poster { flex: 0 0 120px; margin-right: 0; } .poster img { border-radius: 12px; width: 120px; height: auto; box-shadow: 0 8px 24px rgba(0,0,0,.32); }
-    .info { flex: 1; min-width: 0; } .movie-title { font-size: 22px; line-height: 1.2; font-weight: 750; margin: 2px 0 9px; color: #fff; }
-    .movie-meta { font-size: 14px; color: #c7bfd4; margin-bottom: 10px; }
-    .movie-overview { color: #d1cadb; line-height: 1.55; -webkit-line-clamp: 4; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
-    .movie-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 13px; color: #c2b6d3; margin: 2px 0 8px; }
-    .movie-saved { font-size: 13px; color: #bca7e9; margin-bottom: 8px; }
-    @media (max-width: 600px) { .movie-card { padding: 12px; gap: 12px; border-radius: 14px; } .poster { flex-basis: 88px; } .poster img { width: 88px; } .movie-title { font-size: 18px; } }
+    :root { --ink:#17243a; --muted:#617087; --accent:#286c68; }
+    .stApp { background:#f5f7fa; color:var(--ink); }
+    [data-testid="stHeader"] { background:rgba(245,247,250,.94); }
+    [data-testid="stSidebar"] { background:#17243a; border-right:1px solid #263650; }
+    [data-testid="stSidebar"] * { color:#edf3fb; }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color:#bdc9d9; }
+    h1,h2,h3 { letter-spacing:-.035em; color:#17243a; } h1 { font-weight:800 !important; }
+    [data-testid="stMarkdownContainer"] p,[data-testid="stMarkdownContainer"] li { color:#40516a; }
+    [data-testid="stButton"] button { border-radius:10px; border:1px solid #d5e0e8; background:#fff; color:#1c3348; font-weight:650; transition:transform .15s ease,box-shadow .15s ease; }
+    [data-testid="stButton"] button:hover { border-color:#286c68; color:#205b57; box-shadow:0 5px 14px rgba(23,36,58,.08); transform:translateY(-1px); }
+    [data-testid="stButton"] button[kind="primary"] { background:#286c68; color:white; border-color:#286c68; }
+    [data-testid="stTextInput"] input,[data-testid="stTextArea"] textarea,[data-testid="stNumberInput"] input { border-radius:10px; background:white; border-color:#d6e0e8; color:#17243a; }
+    [data-testid="stSelectbox"] [data-baseweb="select"],[data-testid="stMultiSelect"] [data-baseweb="select"] { background:white; border-radius:10px; }
+    [data-testid="stAlert"] { border-radius:12px; }
+    .hero-banner { position:relative; overflow:hidden; border-radius:24px; padding:34px 38px; margin:4px 0 26px; background:linear-gradient(112deg,#17243a 0%,#244a58 62%,#286c68 100%); color:#fff; box-shadow:0 18px 38px rgba(23,36,58,.14); }
+    .hero-banner:after { content:"✦"; position:absolute; right:7%; top:-35px; font-size:190px; line-height:1; color:rgba(255,255,255,.07); }
+    .hero-eyebrow { color:#a8ddd4; font-size:12px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; margin-bottom:10px; }
+    .hero-title { color:white; font-size:clamp(28px,4vw,43px); line-height:1.08; font-weight:800; letter-spacing:-.045em; max-width:650px; margin-bottom:12px; }
+    .hero-copy { color:#e0eaf0 !important; font-size:16px; line-height:1.6; max-width:590px; margin:0; }
+    .section-kicker { color:#286c68; font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin-bottom:5px; }
+    .movie-card { background:#fff; border:1px solid #e2e8ef; border-radius:18px; padding:18px; margin-bottom:14px; display:flex; gap:18px; box-shadow:0 7px 22px rgba(23,36,58,.055); color:#17243a; transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease; }
+    .movie-card:hover { border-color:#9bc9c3; transform:translateY(-2px); box-shadow:0 12px 28px rgba(23,36,58,.09); }
+    .movie-card.recommended { background:#f0f8f6; border-color:#cde5e0; border-left:4px solid #286c68; }
+    .poster { flex:0 0 120px; margin-right:0; } .poster img { border-radius:12px; width:120px; height:auto; box-shadow:0 5px 16px rgba(23,36,58,.14); }
+    .info { flex:1; min-width:0; } .movie-title { font-size:22px; line-height:1.2; font-weight:780; margin:2px 0 9px; color:#17243a; }
+    .movie-meta { font-size:14px; color:#617087; margin-bottom:10px; }
+    .movie-overview { color:#536278; line-height:1.6; -webkit-line-clamp:4; display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden; }
+    .movie-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; font-size:13px; color:#617087; margin:2px 0 8px; }
+    .movie-saved { font-size:13px; color:#286c68; margin-bottom:8px; font-weight:600; }
+    @media (max-width:600px) { .hero-banner { padding:25px 22px; border-radius:18px; } .movie-card { padding:12px; gap:12px; border-radius:14px; } .poster { flex-basis:88px; } .poster img { width:88px; } .movie-title { font-size:18px; } }
     </style>
     """,
     unsafe_allow_html=True,
 )
+
+
+
 
 
 if st.session_state.route == "Preferences":
@@ -867,9 +883,20 @@ elif st.session_state.route == "Accounts":
                     st.error(str(e))
 
 else:
-    st.title("Movie Recommender")
-    st.write("Search for a movie and explore recommendations")
-    query = st.text_input("Search for a movie")
+    st.markdown(
+        """
+        <div class="hero-banner">
+          <div class="hero-eyebrow">Your personal cinema guide</div>
+          <div class="hero-title">A better watch starts with a great match.</div>
+          <p class="hero-copy">Find films that fit your taste, save the ones you love, and discover your next favourite from a world of cinema.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown('<div class="section-kicker">Explore the catalogue</div>', unsafe_allow_html=True)
+    st.title("Find your next favourite")
+    st.write("Search by title to explore films and get tailored recommendations.")
+    query = st.text_input("Search movies", placeholder="Try Dune, Inception, Spirited Away…", label_visibility="collapsed")
 
     if query:
         results = search_movies(query)
