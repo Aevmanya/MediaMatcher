@@ -549,6 +549,24 @@ st.markdown(
     [data-testid="stSelectbox"] [data-baseweb="select"],[data-testid="stMultiSelect"] [data-baseweb="select"] { background:#1c1d22; border-radius:11px; }
     [data-testid="stAlert"] { border-radius:13px; }
     [data-testid="stRadio"] label,[data-testid="stCheckbox"] label { color:#eee9e0; }
+    .page-hero { position:relative; isolation:isolate; overflow:hidden; border:1px solid #393137; border-radius:24px; padding:clamp(26px,4vw,42px); margin:4px 0 28px; background:radial-gradient(ellipse at 88% 10%,rgba(214,168,92,.18),transparent 31%),linear-gradient(118deg,#211f25 0%,#2b2228 52%,#172426 100%); box-shadow:0 18px 48px rgba(0,0,0,.2); }
+    .page-hero:after { content:"✦"; position:absolute; right:5%; top:-28px; font-family:Georgia,serif; font-size:150px; color:rgba(214,168,92,.07); pointer-events:none; }
+    .page-hero-title { position:relative; z-index:1; color:#fffaf0; font-family:Georgia,"Times New Roman",serif; font-size:clamp(31px,4.5vw,49px); font-weight:700; line-height:1.08; letter-spacing:-.045em; max-width:760px; margin:0 0 13px; }
+    .page-hero-copy { position:relative; z-index:1; color:#d0c8c1 !important; font-size:15px; line-height:1.75; max-width:690px; margin:0; }
+    .panel-heading { color:#f4f0e8; font-family:Georgia,"Times New Roman",serif; font-size:25px; font-weight:700; letter-spacing:-.025em; margin:8px 0 5px; }
+    .panel-copy { color:#aaa59e !important; font-size:14px; line-height:1.7; margin:0 0 18px; }
+    .stat-tile { min-height:112px; padding:17px 18px; margin:8px 0 18px; border-radius:15px; border:1px solid #33343a; background:linear-gradient(145deg,#222329,#191a1e); }
+    .stat-label,.detail-label { color:#c69d58; font-size:10px; font-weight:850; letter-spacing:.16em; margin-bottom:9px; }
+    .stat-value { color:#fff5e4; font-family:Georgia,"Times New Roman",serif; font-size:27px; font-weight:700; line-height:1.2; }
+    .stat-note { color:#9e9992; font-size:12px; margin-top:5px; }
+    .detail-panel,.empty-panel { border:1px solid #303137; background:linear-gradient(145deg,#202126,#191a1e); border-radius:16px; padding:22px; margin:10px 0 20px; }
+    .detail-label { margin-top:6px; }
+    .detail-value { color:#e3ddd4; font-size:15px; line-height:1.8; margin-bottom:17px; }
+    .detail-value:last-child { margin-bottom:0; }
+    .stat-strip { display:flex; align-items:center; gap:14px; border-bottom:1px solid #303137; padding:0 0 18px; margin:0 0 22px; }
+    .stat-strip-number { color:#f0c879; font-family:Georgia,"Times New Roman",serif; font-size:34px; font-weight:700; }
+    .stat-strip-label { color:#aaa59e; font-size:10px; font-weight:850; letter-spacing:.17em; }
+    .empty-title { color:#fff5e4; font-family:Georgia,"Times New Roman",serif; font-size:24px; font-weight:700; margin-bottom:7px; }
     .hero-banner { position:relative; isolation:isolate; overflow:hidden; border:1px solid #393137; border-radius:26px; padding:clamp(28px,5vw,52px); margin:4px 0 30px; background:radial-gradient(ellipse at 82% 18%,rgba(214,168,92,.23),transparent 30%),linear-gradient(118deg,#242027 0%,#31232a 48%,#172629 100%); color:#fff; box-shadow:0 24px 65px rgba(0,0,0,.26); }
     .hero-banner:before { content:""; position:absolute; z-index:-1; width:330px; height:330px; right:-80px; bottom:-180px; border:1px solid rgba(214,168,92,.28); border-radius:50%; box-shadow:0 0 0 28px rgba(214,168,92,.035),0 0 0 58px rgba(214,168,92,.025); }
     .hero-banner:after { content:"MM"; position:absolute; z-index:-1; right:5%; top:8%; font-family:Georgia,serif; font-size:clamp(100px,17vw,210px); font-weight:900; letter-spacing:-.12em; color:rgba(255,255,255,.035); line-height:1; }
@@ -577,9 +595,16 @@ st.markdown(
 
 
 if st.session_state.route == "Preferences":
-    st.title("Preferences")
+    st.markdown("""
+    <div class="page-hero">
+      <div class="hero-eyebrow">YOUR TASTE, YOUR RULES</div>
+      <div class="page-hero-title">Build your cinema profile.</div>
+      <p class="page-hero-copy">Tune your language, era, and favourite genres so MediaMatcher can find films that feel made for you.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown('<div class="section-kicker">PERSONALISE YOUR EXPERIENCE</div>', unsafe_allow_html=True)
     if not is_preferences_complete(st.session_state.preferences):
-        st.subheader("Welcome! Let's set up your preferences")
+        st.markdown('<div class="panel-heading">Let’s get to know your taste</div><p class="panel-copy">Choose your settings below. We’ll use them to shape your recommendations.</p>', unsafe_allow_html=True)
         lang_map = {
             "English": "en",
             "Hindi": "hi",
@@ -655,20 +680,16 @@ if st.session_state.route == "Preferences":
                 st.session_state.route = "Home"
                 st.rerun()
     else:
-        st.subheader("Your Preferences")
-        st.write("Languages:", st.session_state.preferences["languages"])
-        st.write(
-            "Year Range:",
-            f"{st.session_state.preferences['start_year']} - {st.session_state.preferences['end_year']}",
-        )
-        st.write(
-            "Favorite Genres:",
-            ", ".join(st.session_state.preferences["genres"]),
-        )
-        st.write(
-            "Favorite Movies:",
-            ", ".join(st.session_state.preferences["favorite_movies"]),
-        )
+        prefs = st.session_state.preferences
+        st.markdown('<div class="panel-heading">Your current profile</div><p class="panel-copy">Your discovery settings at a glance.</p>', unsafe_allow_html=True)
+        p1, p2, p3 = st.columns(3)
+        with p1:
+            st.markdown(f'<div class="stat-tile"><div class="stat-label">LANGUAGES</div><div class="stat-value">{len(prefs["languages"])}</div><div class="stat-note">selected</div></div>', unsafe_allow_html=True)
+        with p2:
+            st.markdown(f'<div class="stat-tile"><div class="stat-label">RELEASE ERA</div><div class="stat-value">{prefs["start_year"]}–{prefs["end_year"]}</div><div class="stat-note">your preferred years</div></div>', unsafe_allow_html=True)
+        with p3:
+            st.markdown(f'<div class="stat-tile"><div class="stat-label">GENRES</div><div class="stat-value">{len(prefs["genres"])}</div><div class="stat-note">of 4 chosen</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="detail-panel"><div class="detail-label">PREFERRED LANGUAGES</div><div class="detail-value">' + ", ".join(prefs["languages"]) + '</div><div class="detail-label">FAVOURITE GENRES</div><div class="detail-value">' + ", ".join(prefs["genres"]) + '</div><div class="detail-label">INSPIRATION FILMS</div><div class="detail-value">' + ", ".join(prefs["favorite_movies"]) + '</div></div>', unsafe_allow_html=True)
         if st.button("Edit Preferences"):
             st.session_state.preferences = {
                 "languages": [],
@@ -680,7 +701,15 @@ if st.session_state.route == "Preferences":
             st.rerun()
 
 elif st.session_state.route == "Finder":
-    st.title("Movie Finder")
+    st.markdown("""
+    <div class="page-hero">
+      <div class="hero-eyebrow">THE DISCOVERY STUDIO</div>
+      <div class="page-hero-title">Tell us the mood. We’ll find the movie.</div>
+      <p class="page-hero-copy">Blend genres and set a rating threshold to uncover films worth your next evening.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown('<div class="section-kicker">DESIGN YOUR SEARCH</div>', unsafe_allow_html=True)
+    st.markdown('<div class="panel-heading">Set your film criteria</div><p class="panel-copy">Pick up to four genres and a minimum rating. Choose at least two genres to start the search.</p>', unsafe_allow_html=True)
     genres = list(get_genres().keys())
     selected_genres = st.multiselect(
         "Choose genres", genres, max_selections=4
@@ -715,7 +744,8 @@ elif st.session_state.route == "Finder":
                     st.session_state.finder_results = recs
 
     if st.session_state.finder_results:
-        st.subheader("Finder Recommendations")
+        st.markdown('<div class="section-kicker">CURATED FOR YOUR SEARCH</div>', unsafe_allow_html=True)
+        st.markdown('<div class="panel-heading">Your matches</div><p class="panel-copy">A shortlist built around the genres and rating you selected.</p>', unsafe_allow_html=True)
         for i, (m, score) in enumerate(st.session_state.finder_results[:12]):
             display_movie_box(
                 m,
@@ -725,9 +755,16 @@ elif st.session_state.route == "Finder":
             )
 
 elif st.session_state.route == "Favourites":
-    st.title("Your Favourite Movies")
+    st.markdown("""
+    <div class="page-hero">
+      <div class="hero-eyebrow">YOUR PRIVATE COLLECTION</div>
+      <div class="page-hero-title">The ones worth keeping.</div>
+      <p class="page-hero-copy">Every saved film helps MediaMatcher understand your taste and make smarter suggestions.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown(f'<div class="stat-strip"><span class="stat-strip-number">{len(st.session_state.favourites)}</span><span class="stat-strip-label">FILMS IN YOUR COLLECTION</span></div>', unsafe_allow_html=True)
     if not st.session_state.favourites:
-        st.info("You haven't added any movies yet.")
+        st.markdown('<div class="empty-panel"><div class="empty-title">Your collection starts here.</div><div class="panel-copy">Search for a film you love and save it to build your personal cinema shelf.</div></div>', unsafe_allow_html=True)
     else:
         for i, m in enumerate(st.session_state.favourites):
             display_movie_box(
@@ -735,11 +772,15 @@ elif st.session_state.route == "Favourites":
             )
 
 elif st.session_state.route == "Recommended":
-    st.title("Recommendations")
+    st.markdown("""
+    <div class="page-hero">
+      <div class="hero-eyebrow">A LITTLE MORE YOU</div>
+      <div class="page-hero-title">Your next favourite is out there.</div>
+      <p class="page-hero-copy">Recommendations are shaped by your saved films, genre overlap, ratings, and viewing preferences.</p>
+    </div>
+    """, unsafe_allow_html=True)
     if not st.session_state.favourites:
-        st.info(
-            "No movies have been added to the favourites list. Add some movies first."
-        )
+        st.markdown('<div class="empty-panel"><div class="empty-title">Give us a starting point.</div><div class="panel-copy">Save a few films you love first. We’ll use them to build a more personal set of recommendations.</div></div>', unsafe_allow_html=True)
     else:
         pool = []
         TARGET_POOL_SIZE = 400
@@ -778,7 +819,8 @@ elif st.session_state.route == "Recommended":
             st.session_state.favourites, normal_candidates, API_KEY
         )
 
-        st.subheader("Top 10 Personalized Recommendations")
+        st.markdown('<div class="section-kicker">MATCHED TO YOUR TASTE</div>', unsafe_allow_html=True)
+        st.markdown('<div class="panel-heading">Your top 10 picks</div><p class="panel-copy">Ranked to help you discover something new without losing the thread of what you enjoy.</p>', unsafe_allow_html=True)
         if not recs:
             st.info("Not enough data yet. Showing best available matches.")
 
@@ -792,7 +834,13 @@ elif st.session_state.route == "Recommended":
             )
 
 elif st.session_state.route == "Upcoming":
-    st.title("Upcoming Movies You May Like")
+    st.markdown("""
+    <div class="page-hero">
+      <div class="hero-eyebrow">COMING SOON TO YOUR WATCHLIST</div>
+      <div class="page-hero-title">Make room for what’s next.</div>
+      <p class="page-hero-copy">A look ahead at upcoming releases, with picks informed by the films you already enjoy.</p>
+    </div>
+    """, unsafe_allow_html=True)
     TODAY = date.today()
     pool = []
 
@@ -835,7 +883,8 @@ elif st.session_state.route == "Upcoming":
     if len(ranked) < 3:
         ranked = [(m, 0.0) for m in unique[:3]]
 
-    st.subheader("Upcoming Movies You Might Like")
+    st.markdown('<div class="section-kicker">ON THE HORIZON</div>', unsafe_allow_html=True)
+    st.markdown('<div class="panel-heading">Upcoming picks for you</div><p class="panel-copy">Release dates can change, so check the latest listings before planning a premiere night.</p>', unsafe_allow_html=True)
     for i, (m, score) in enumerate(ranked[:3]):
         display_movie_box(
             m,
@@ -845,7 +894,14 @@ elif st.session_state.route == "Upcoming":
         )
 
 elif st.session_state.route == "Accounts":
-    st.title("Account")
+    st.markdown("""
+    <div class="page-hero account-hero">
+      <div class="hero-eyebrow">WELCOME TO MEDIAMATCHER</div>
+      <div class="page-hero-title">Your next great watch starts here.</div>
+      <p class="page-hero-copy">Sign in to return to your collection, or create an account to start building a cinema profile that’s yours.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown('<div class="section-kicker">YOUR ACCOUNT</div>', unsafe_allow_html=True)
     st.markdown(
         "Welcome! Please log in to an existing account or create a new "
         "one to save your preferences and favourites."
