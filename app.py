@@ -229,25 +229,6 @@ with st.sidebar:
             options=["Accounts"],
             icons=["person-circle"],
             default_index=0,
-            styles={
-                "container": {"padding": "4px 0", "background-color": "#17181d"},
-                "icon": {"color": "#d6a85c", "font-size": "17px"},
-                "nav-link": {
-                    "font-size": "14px",
-                    "text-align": "left",
-                    "margin": "3px 0",
-                    "padding": "10px 12px",
-                    "border-radius": "10px",
-                    "color": "#d8d2c8",
-                    "background-color": "#202126",
-                    "--hover-color": "#2a2927",
-                },
-                "nav-link-selected": {
-                    "background-color": "#332b20",
-                    "color": "#f0c879",
-                    "border-left": "3px solid #d6a85c",
-                },
-            },
             key="guest_navigation",
         )
         st.session_state.route = "Accounts"
@@ -258,25 +239,6 @@ with st.sidebar:
             options=pages,
             icons=["house", "search", "heart", "stars", "calendar-event", "sliders", "person-circle"],
             default_index=default_index,
-            styles={
-                "container": {"padding": "4px 0", "background-color": "#17181d"},
-                "icon": {"color": "#d6a85c", "font-size": "17px"},
-                "nav-link": {
-                    "font-size": "14px",
-                    "text-align": "left",
-                    "margin": "3px 0",
-                    "padding": "10px 12px",
-                    "border-radius": "10px",
-                    "color": "#d8d2c8",
-                    "background-color": "#202126",
-                    "--hover-color": "#2a2927",
-                },
-                "nav-link-selected": {
-                    "background-color": "#332b20",
-                    "color": "#f0c879",
-                    "border-left": "3px solid #d6a85c",
-                },
-            },
             key="member_navigation",
         )
         st.session_state.route = selected_page
