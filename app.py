@@ -488,7 +488,13 @@ st.markdown(
     <style>
     :root { --ink:#f4f0e8; --muted:#b5b0a7; --accent:#d6a85c; }
     .stApp { background:#101114; color:var(--ink); }
-    [data-testid="stHeader"] { background:rgba(16,17,20,.94); }
+    [data-testid="stHeader"], header[data-testid="stHeader"], .stAppHeader, [data-testid="stToolbar"], [data-testid="stDecoration"] { background:#101114 !important; color:#f4f0e8 !important; }
+    [data-testid="stHeader"] { border-bottom:1px solid #292a30; }
+    [data-testid="stToolbar"] button, [data-testid="stStatusWidget"] button { color:#f4f0e8 !important; }
+    [data-testid="stAppViewContainer"] { background:#101114 !important; }
+    [data-testid="stSidebar"] [aria-current="page"], [data-testid="stSidebar"] a[aria-selected="true"] { background:#332b20 !important; border-left:3px solid #d6a85c !important; }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 { color:#f0c879 !important; }
+    .stApp::before { content:""; display:block; height:3px; width:100%; background:linear-gradient(90deg,#7b3c42 0%,#d6a85c 52%,#286c68 100%); }
     [data-testid="stSidebar"] { background:#17181d; border-right:1px solid #2b2c32; }
     [data-testid="stSidebar"] * { color:#f4f0e8; }
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color:#b5b0a7; }
