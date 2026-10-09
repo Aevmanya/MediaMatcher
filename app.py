@@ -591,7 +591,7 @@ st.markdown(
     [data-testid="stSelectbox"] [data-baseweb="select"],[data-testid="stMultiSelect"] [data-baseweb="select"] { background:#1c1d22; border-radius:11px; }
     [data-testid="stAlert"] { border-radius:13px; }
     [data-testid="stRadio"] label,[data-testid="stCheckbox"] label { color:#eee9e0; }
-    .page-hero { position:relative; isolation:isolate; overflow:hidden; border:1px solid #393137; border-radius:20px; padding:clamp(16px,2.2vw,24px) clamp(18px,2.5vw,28px); margin:0 0 22px; background:radial-gradient(ellipse at 88% 10%,rgba(214,168,92,.18),transparent 31%),linear-gradient(118deg,#211f25 0%,#2b2228 52%,#172426 100%); box-shadow:0 18px 48px rgba(0,0,0,.2); }
+    .page-hero { position:relative; isolation:isolate; overflow:hidden; border:1px solid #393137; border-radius:20px; padding:clamp(16px,2.2vw,24px) clamp(18px,2.5vw,28px) clamp(24px,3vw,32px); margin:0 0 22px; background:radial-gradient(ellipse at 88% 10%,rgba(214,168,92,.18),transparent 31%),linear-gradient(118deg,#211f25 0%,#2b2228 52%,#172426 100%); box-shadow:0 18px 48px rgba(0,0,0,.2); }
     .page-hero:after { content:"✦"; position:absolute; right:5%; top:-28px; font-family:Georgia,serif; font-size:150px; color:rgba(214,168,92,.07); pointer-events:none; }
     .page-hero-title { position:relative; z-index:1; color:#fffaf0; font-family:Georgia,"Times New Roman",serif; font-size:clamp(31px,4.5vw,49px); font-weight:700; line-height:1.08; letter-spacing:-.045em; max-width:760px; margin:0 0 13px; }
     .page-hero-copy { position:relative; z-index:1; color:#d0c8c1 !important; font-size:15px; line-height:1.75; max-width:690px; margin:0; }
