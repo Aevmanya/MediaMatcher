@@ -35,7 +35,7 @@ API_KEY = st.secrets["TMDB_API_KEY"]
 BASE_URL = "https://api.themoviedb.org/3"
 IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
 
-st.set_page_config(page_title="AI Movie Recommender")
+st.set_page_config(page_title="MediaMatcher | Discover your next favourite", page_icon="🎬", layout="wide", initial_sidebar_state="expanded")
 
 
 if "preferences" not in st.session_state:
@@ -478,42 +478,23 @@ def display_movie_box(
 st.markdown(
     """
     <style>
-    .movie-card {
-        background:#f0f0f0;
-        border-radius:10px;
-        padding: 15px;
-        margin-bottom:15px;
-        display: flex;
-    }
-    .movie-card.recommended {
-        background:#eef6ff;
-        border-left: 6px solid #4a90e2;
-    }
-    .poster { flex:0 0 120px; margin-right:15px; }
-    .poster img { border-radius:6px; }
-    .info { flex:1; }
-    .movie-title { font-size:22px; font-weight:bold; margin-bottom:7px; margin-top:2px; }
-    .movie-meta { font-size:14px; color:#555; margin-bottom:10px; }
-    .movie-overview {
-        -webkit-line-clamp:4;
-        display:-webkit-box;
-        -webkit-box-orient:vertical;
-        overflow:hidden;
-    }
-    .movie-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 13px;
-        color: #555;
-        margin-top: 2px;
-        margin-bottom: 0px;
-    }
-    .movie-saved {
-        font-size: 13px;
-        color: #666;
-        margin-bottom: 8px;
-    }
+    .stApp { background: radial-gradient(ellipse at top left, rgba(91,54,145,.20), transparent 42%), linear-gradient(180deg,#111018 0%,#0c0b10 100%); color: #f4f1fa; }
+    [data-testid="stHeader"] { background: rgba(12,11,16,.82); }
+    [data-testid="stSidebar"] { background: linear-gradient(180deg,#191522 0%,#100f16 100%); border-right: 1px solid rgba(190,160,255,.14); }
+    h1,h2,h3 { letter-spacing: -.035em; } h1 { font-weight: 800 !important; }
+    [data-testid="stButton"] button { border-radius: 12px; border: 1px solid rgba(186,154,255,.34); transition: transform .15s ease,border-color .15s ease; }
+    [data-testid="stButton"] button:hover { border-color: #b99aff; transform: translateY(-1px); }
+    [data-testid="stTextInput"] input,[data-testid="stTextArea"] textarea,[data-testid="stNumberInput"] input { border-radius: 10px; }
+    .movie-card { background: linear-gradient(135deg,rgba(36,31,48,.98),rgba(23,21,30,.98)); border: 1px solid rgba(190,170,230,.16); border-radius: 18px; padding: 18px; margin-bottom: 16px; display: flex; gap: 18px; box-shadow: 0 12px 32px rgba(0,0,0,.18); color: #f4f1fa; transition: border-color .18s ease,transform .18s ease; }
+    .movie-card:hover { border-color: rgba(185,154,255,.5); transform: translateY(-2px); }
+    .movie-card.recommended { background: linear-gradient(135deg,rgba(53,37,76,.98),rgba(27,23,38,.98)); border-left: 4px solid #b99aff; }
+    .poster { flex: 0 0 120px; margin-right: 0; } .poster img { border-radius: 12px; width: 120px; height: auto; box-shadow: 0 8px 24px rgba(0,0,0,.32); }
+    .info { flex: 1; min-width: 0; } .movie-title { font-size: 22px; line-height: 1.2; font-weight: 750; margin: 2px 0 9px; color: #fff; }
+    .movie-meta { font-size: 14px; color: #c7bfd4; margin-bottom: 10px; }
+    .movie-overview { color: #d1cadb; line-height: 1.55; -webkit-line-clamp: 4; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+    .movie-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 13px; color: #c2b6d3; margin: 2px 0 8px; }
+    .movie-saved { font-size: 13px; color: #bca7e9; margin-bottom: 8px; }
+    @media (max-width: 600px) { .movie-card { padding: 12px; gap: 12px; border-radius: 14px; } .poster { flex-basis: 88px; } .poster img { width: 88px; } .movie-title { font-size: 18px; } }
     </style>
     """,
     unsafe_allow_html=True,
