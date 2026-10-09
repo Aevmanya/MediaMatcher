@@ -220,20 +220,28 @@ default_index = (
 )
 
 with st.sidebar:
-    selected_page = option_menu(
-        menu_title="Main Menu",
-        options=pages,
-        default_index=default_index,
-    )
-    st.session_state.route = selected_page
-
-if (
-    not st.session_state.logged_in
-    and st.session_state.route != "Accounts"
-):
-    st.warning("Please login or create an account first.")
-    st.session_state.route = "Accounts"
-    st.rerun()
+    st.markdown("## 🎬 MediaMatcher")
+    st.caption("Find your next favourite")
+    if not st.session_state.logged_in:
+        # Keep account access separate and always visible before authentication.
+        selected_page = option_menu(
+            menu_title="GET STARTED",
+            options=["Accounts"],
+            icons=["person-circle"],
+            default_index=0,
+            key="guest_navigation",
+        )
+        st.session_state.route = "Accounts"
+        st.info("Log in or create an account to explore your personal movie space.")
+    else:
+        selected_page = option_menu(
+            menu_title="YOUR CINEMA",
+            options=pages,
+            icons=["house", "search", "heart", "stars", "calendar-event", "sliders", "person-circle"],
+            default_index=default_index,
+            key="member_navigation",
+        )
+        st.session_state.route = selected_page
 
 if (
     st.session_state.logged_in
