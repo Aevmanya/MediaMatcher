@@ -456,43 +456,44 @@ def rank_against_single_movie(base_movie, candidates, limit=6):
 
 
 def build_finder_candidates(
-    selected_genres, max_pages=15, min_popularity=2, min_rating=0.01
+    selected_genres, max_pages=20, min_popularity=0, min_rating=0.01
 ):
     genres_map = get_genres()
     selected_ids = [genres_map[g] for g in selected_genres if g in genres_map]
-    required_matches = 1
     pool = []
+    seen = set()
     page = 1
 
     while page <= max_pages:
         data = tmdb_get(
             "/discover/movie",
             {
+                # TMDB's comma-separated genre filter requires every selected genre.
                 "with_genres": ",".join(map(str, selected_ids)),
                 "vote_average.gte": min_rating,
+                "sort_by": "vote_average.desc",
+                "vote_count.gte": 20,
                 "page": page,
             },
         )
-        for m in data.get("results", []):
-            movie_genres = set(m.get("genre_ids", []))
+        for movie in data.get("results", []):
+            movie_id = movie.get("id")
             if (
-                len(movie_genres & set(selected_ids)) >= required_matches
-                and m.get("popularity", 0) >= min_popularity
-                and respects_preferences(m)
+                movie_id is None
+                or movie_id in seen
+                or not set(selected_ids).issubset(set(movie.get("genre_ids", [])))
+                or movie.get("vote_average", 0) < min_rating
+                or not respects_preferences(movie)
             ):
-                pool.append(m)
+                continue
+            seen.add(movie_id)
+            pool.append(movie)
 
-        if len(pool) >= 200:
+        if len(pool) >= 300 or not data.get("results"):
             break
         page += 1
 
-    seen = set()
-    unique = []
-    for m in pool:
-        if m["id"] not in seen:
-            seen.add(m["id"])
-            unique.append(m)
-    return unique
+    return pool
 
 
 def split_for_recommendation(pool, viewed_size=12):
@@ -926,20 +927,52 @@ elif st.session_state.route == "Finder":
         else:
             with st.spinner("Building recommendations..."):
                 pool = build_finder_candidates(
-                    selected_genres, max_pages=10, min_rating=min_rating
+                    selected_genres, max_pages=20, min_rating=min_rating
                 )
-                if len(pool) < 80:
-                    pool = build_finder_candidates(
-                        selected_genres, max_pages=20, min_rating=min_rating
-                    )
-                viewed, candidates = split_for_recommendation(pool)
-                if not candidates:
-                    st.info("Not enough movies found. Try different genres.")
-                else:
-                    recs = recommend_from_viewed(
-                        viewed, candidates, API_KEY
-                    )
-                    st.session_state.finder_results = recs
+                favourite_ids = {
+                    fav.get("id")
+                    for fav in st.session_state.favourites
+                    if fav.get("id") is not None
+                }
+                selected_ids = {
+                    GENRES_MAP[g] for g in selected_genres if g in GENRES_MAP
+                }
+                # Keep only unique, non-favourite movies that meet the chosen genres
+                # and rating threshold. Score only genre overlap and TMDB rating.
+                unique_pool = {}
+                for movie in pool:
+                    movie_id = movie.get("id")
+                    movie_genres = set(movie.get("genre_ids", []))
+                    rating = movie.get("vote_average", 0)
+                    if (
+                        movie_id is None
+                        or movie_id in favourite_ids
+                        or movie_id in unique_pool
+                        or not selected_ids.issubset(movie_genres)
+                        or rating < min_rating
+                    ):
+                        continue
+                    unique_pool[movie_id] = movie
+
+                ranked = []
+                for movie in unique_pool.values():
+                    genre_matches = len(selected_ids & set(movie.get("genre_ids", [])))
+                    rating = float(movie.get("vote_average", 0) or 0)
+                    # Genre match is the primary signal; rating breaks ties.
+                    score = round(genre_matches * 10 + rating, 2)
+                    ranked.append((movie, score))
+
+                ranked.sort(
+                    key=lambda item: (
+                        item[1],
+                        float(item[0].get("vote_average", 0) or 0),
+                        item[0].get("title", "").casefold(),
+                    ),
+                    reverse=True,
+                )
+                st.session_state.finder_results = ranked[:12]
+                if not st.session_state.finder_results:
+                    st.info("No movies matched all selected genres and the minimum rating. Try different genres or a lower rating.")
 
     if st.session_state.finder_results:
         st.markdown('<div class="section-kicker">CURATED FOR YOUR SEARCH</div>', unsafe_allow_html=True)
