@@ -220,7 +220,7 @@ default_index = (
 )
 
 with st.sidebar:
-    st.image("assets/mediamatcher_logo.svg", use_container_width=True)
+    st.image("assets/mediamatcher_logo.svg", width=260)
 
     if not st.session_state.logged_in:
         # Keep account access separate and always visible before authentication.
@@ -604,6 +604,24 @@ st.markdown(
     [data-testid="stSidebar"]::before,
     [data-testid="stSidebar"]::after { background: #17181d !important; }
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] { background: transparent !important; }
+    /* Keep sidebar branding and navigation compact so the menu fits neatly. */
+    [data-testid="stSidebar"] [data-testid="stImage"] {
+        margin: 0 auto 2px !important;
+        padding: 0 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stImage"] img {
+        display: block;
+        max-height: 150px;
+        object-fit: contain;
+        object-position: center;
+    }
+    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+        gap: .45rem !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stElementContainer"] {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
     /* Refined sidebar brand and section headings */
     [data-testid="stSidebar"] .sidebar-brand {
         padding: 8px 2px 20px;
