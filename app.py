@@ -260,6 +260,7 @@ with st.sidebar:
             default_index=default_index,
             styles={
                 "container": {"padding": "8px 0 12px", "background-color": "#17181d", "border-radius": "0", "border": "none"},
+                "menu-title": {"color": "#f0c879", "font-size": "17px", "font-weight": "700", "letter-spacing": "0.04em"},
                 "icon": {"color": "#d6a85c", "font-size": "17px"},
                 "nav-link": {
                     "font-size": "14px",
@@ -690,6 +691,9 @@ st.markdown(
     [data-testid="stSidebar"] * { color: #f4f0e8; }
     [data-testid="stSidebar"] .nav-link, [data-testid="stSidebar"] .nav-link * { color: #d8d2c8 !important; }
     [data-testid="stSidebar"] .nav-link.active, [data-testid="stSidebar"] .nav-link.active * { color: #f0c879 !important; }
+    [data-testid="stSidebar"] .menu-title,
+    [data-testid="stSidebar"] .nav-header,
+    [data-testid="stSidebar"] [class*="menu-title"] { color: #f0c879 !important; -webkit-text-fill-color: #f0c879 !important; }
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color: #b5b0a7; }
     [data-testid="stSidebar"] [data-testid="stAlert"] { background:#24252a; border:1px solid #37383e; }
     h1,h2,h3 { letter-spacing:-.04em; color:#f4f0e8; } h1 { font-weight:850 !important; }
