@@ -220,8 +220,16 @@ default_index = (
 )
 
 with st.sidebar:
-    st.markdown("## 🎬 MediaMatcher")
-    st.caption("Find your next favourite")
+    st.markdown(
+        """
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-mark">MM</div>
+            <div class="sidebar-brand-name">MediaMatcher</div>
+            <div class="sidebar-brand-tagline">YOUR NEXT FAVOURITE FILM STARTS HERE</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     if not st.session_state.logged_in:
         # Keep account access separate and always visible before authentication.
         selected_page = option_menu(
@@ -594,6 +602,56 @@ st.markdown(
     [data-testid="stSidebar"]::before,
     [data-testid="stSidebar"]::after { background: #17181d !important; }
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] { background: transparent !important; }
+    /* Refined sidebar brand and section headings */
+    [data-testid="stSidebar"] .sidebar-brand {
+        padding: 8px 2px 20px;
+        margin: 0 0 14px;
+        border-bottom: 1px solid #303137;
+    }
+    [data-testid="stSidebar"] .sidebar-brand-mark {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        margin-bottom: 14px;
+        border: 1px solid rgba(214,168,92,.42);
+        border-radius: 12px;
+        background: linear-gradient(145deg,#332b20,#242126);
+        color: #f0c879 !important;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: .08em;
+    }
+    [data-testid="stSidebar"] .sidebar-brand-name {
+        color: #f4f0e8 !important;
+        font-size: 1.35rem;
+        line-height: 1.2;
+        font-weight: 760;
+        letter-spacing: -.045em;
+        margin-bottom: 7px;
+    }
+    [data-testid="stSidebar"] .sidebar-brand-tagline {
+        color: #8f9099 !important;
+        font-size: .61rem;
+        font-weight: 700;
+        line-height: 1.5;
+        letter-spacing: .14em;
+    }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 {
+        font-size: .7rem !important;
+        text-transform: uppercase;
+        letter-spacing: .16em !important;
+        font-weight: 750 !important;
+        color: #8f9099 !important;
+        margin: 4px 0 12px !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+        color: #8f9099 !important;
+        font-size: .86rem;
+        line-height: 1.55;
+    }
+
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 {
         color: #f4f0e8 !important;
         letter-spacing: -0.03em;
