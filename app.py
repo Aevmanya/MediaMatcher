@@ -220,16 +220,8 @@ default_index = (
 )
 
 with st.sidebar:
-    st.markdown(
-        """
-        <div class="sidebar-brand">
-            <div class="sidebar-brand-mark">MM</div>
-            <div class="sidebar-brand-name">MediaMatcher</div>
-            <div class="sidebar-brand-tagline">YOUR NEXT FAVOURITE FILM STARTS HERE</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.image("assets/mediamatcher_logo.svg", use_container_width=True)
+
     if not st.session_state.logged_in:
         # Keep account access separate and always visible before authentication.
         selected_page = option_menu(
