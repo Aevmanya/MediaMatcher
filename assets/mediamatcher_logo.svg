@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
+<defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".45" stop-color="#f2bd55"/><stop offset="1" stop-color="#b87526"/></linearGradient></defs>
+<rect width="720" height="420" rx="28" fill="#17181d"/>
+<g fill="none" stroke="url(#gold)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M190 192 Q360 20 530 160 Q570 195 528 238"/>
+<path d="M530 238 Q360 380 190 248 Q150 215 190 178"/>
+<path d="M235 255 V105 L300 153 L365 105 V255 M355 255 V105 L420 153 L485 105 V255"/>
+<path d="M330 169 L330 213 L368 191 Z" fill="url(#gold)" stroke="none"/>
+</g>
+<g fill="url(#gold)" font-family="Arial,Helvetica,sans-serif" text-anchor="middle">
+<text x="360" y="326" font-size="54" font-weight="700" letter-spacing="-2">MediaMatcher</text>
+<text x="360" y="366" font-size="15" font-weight="700" letter-spacing="5">FIND YOUR NEXT FAVOURITE</text>
+</g>
+<path d="M88 362 H168 M552 362 H632" stroke="#d6a85c" stroke-width="2"/>
+</svg>
