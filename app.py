@@ -713,6 +713,31 @@ st.markdown(
     [data-testid="stTextInput"] input,[data-testid="stTextArea"] textarea,[data-testid="stNumberInput"] input { border-radius:11px; background:#1c1d22; border-color:#393a40; color:#f4f0e8; }
     [data-testid="stTextInput"] input:focus,[data-testid="stTextArea"] textarea:focus { border-color:#d6a85c; box-shadow:0 0 0 1px #d6a85c; }
     [data-testid="stSelectbox"] [data-baseweb="select"],[data-testid="stMultiSelect"] [data-baseweb="select"] { background:#1c1d22; border-radius:11px; }
+    /* Dark cinematic dropdown menus, matching the charcoal-and-gold theme. */
+    [data-baseweb="popover"] [data-baseweb="menu"],
+    [data-baseweb="popover"] [role="listbox"],
+    [data-baseweb="popover"] ul {
+        background:#202126 !important;
+        border:1px solid #3b3632 !important;
+        border-radius:12px !important;
+        box-shadow:0 14px 34px rgba(0,0,0,.42) !important;
+    }
+    [data-baseweb="popover"] [role="option"],
+    [data-baseweb="popover"] li {
+        background:#202126 !important;
+        color:#eee9e0 !important;
+    }
+    [data-baseweb="popover"] [role="option"]:hover,
+    [data-baseweb="popover"] li:hover,
+    [data-baseweb="popover"] [aria-selected="true"] {
+        background:#342d24 !important;
+        color:#f0c879 !important;
+    }
+    [data-testid="stMultiSelect"] [data-baseweb="select"] [data-baseweb="tag"] {
+        background:#3a3021 !important;
+        color:#f0c879 !important;
+        border:1px solid #6b512d !important;
+    }
     [data-testid="stAlert"] { border-radius:13px; }
     [data-testid="stRadio"] label,[data-testid="stCheckbox"] label { color:#eee9e0; }
     .page-hero { position:relative; isolation:isolate; overflow:hidden; border:1px solid #393137; border-radius:20px; padding:clamp(16px,2.2vw,24px) clamp(18px,2.5vw,28px) clamp(30px,3.5vw,38px); margin:0 0 38px; background:radial-gradient(ellipse at 88% 10%,rgba(214,168,92,.18),transparent 31%),linear-gradient(118deg,#211f25 0%,#2b2228 52%,#172426 100%); box-shadow:0 18px 48px rgba(0,0,0,.2); }
