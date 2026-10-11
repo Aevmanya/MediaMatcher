@@ -456,7 +456,7 @@ def rank_against_single_movie(base_movie, candidates, limit=6):
 
 
 def build_finder_candidates(
-    selected_genres, max_pages=15, min_popularity=7, min_rating=0.01
+    selected_genres, max_pages=15, min_popularity=2, min_rating=0.01
 ):
     genres_map = get_genres()
     selected_ids = [genres_map[g] for g in selected_genres if g in genres_map]
@@ -955,7 +955,7 @@ elif st.session_state.route == "Recommended":
         for m in st.session_state.favourites:
             sims = cached_similar(m["id"])
             for x in sims:
-                if x.get("popularity", 0) >= 11 and respects_preferences(x):
+                if x.get("popularity", 0) >= 2 and respects_preferences(x):
                     pool.append(x)
 
         page = 1
@@ -1199,11 +1199,7 @@ else:
         if not results:
             st.info("No movies found.")
         else:
-            results = sorted(
-                results,
-                key=lambda m: m.get("popularity", 0),
-                reverse=True,
-            )
+            # Preserve TMDB's search relevance instead of reordering by popularity.
             st.subheader("Search Results")
             for i, m in enumerate(results[:10]):
                 display_movie_box(
@@ -1217,7 +1213,7 @@ else:
                     TARGET_POOL = 50
 
                     for x in cached_similar(m["id"]):
-                        if x.get("popularity", 0) > 11 and respects_preferences(
+                        if x.get("popularity", 0) >= 2 and respects_preferences(
                             x
                         ):
                             pool.append(x)
@@ -1230,7 +1226,7 @@ else:
                         ).get("results", [])
                         for x in discovered:
                             if (
-                                x.get("popularity", 0) >= 11
+                                x.get("popularity", 0) >= 2
                                 and respects_preferences(x)
                             ):
                                 pool.append(x)
