@@ -965,7 +965,7 @@ elif st.session_state.route == "Recommended":
                 {"vote_average.gte": 1, "page": page},
             ).get("results", [])
             for x in discovered:
-                if x.get("popularity", 0) >= 2 and respects_preferences(x):
+                if x.get("popularity", 0) >= 11 and respects_preferences(x):
                     pool.append(x)
             page += 1
 
