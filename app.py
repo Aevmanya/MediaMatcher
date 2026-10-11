@@ -570,6 +570,16 @@ st.markdown(
     [data-testid="stHeader"] { border-bottom:1px solid #292a30; }
     [data-testid="stToolbar"] button, [data-testid="stStatusWidget"] button { color:#f4f0e8 !important; }
     [data-testid="stAppViewContainer"] { background:#101114 !important; }
+    /* Reduce the blank band above the page content, below Streamlit's toolbar. */
+    [data-testid="stMain"] .block-container {
+        padding-top: 1rem !important;
+    }
+    [data-testid="stMainBlockContainer"] {
+        padding-top: 1rem !important;
+    }
+    [data-testid="stAppViewContainer"] section.main > div:first-child {
+        padding-top: 1rem !important;
+    }
     [data-testid="stSidebar"] [aria-current="page"], [data-testid="stSidebar"] a[aria-selected="true"] { background:#332b20 !important; border-left:3px solid #d6a85c !important; }
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 { color:#f0c879 !important; }
     .stApp::before { content:""; display:block; height:3px; width:100%; background:linear-gradient(90deg,#7b3c42 0%,#d6a85c 52%,#286c68 100%); }
