@@ -1250,6 +1250,7 @@ else:
                         """,
                         unsafe_allow_html=True,
                     )
+                    st.markdown('<div style="height:22px;"></div>', unsafe_allow_html=True)
                     for j, (sm, score) in enumerate(ranked[:5]):
                         display_movie_box(
                             sm,
