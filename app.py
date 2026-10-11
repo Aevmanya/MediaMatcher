@@ -970,14 +970,14 @@ elif st.session_state.route == "Finder":
                     ),
                     reverse=True,
                 )
-                st.session_state.finder_results = ranked[:12]
+                st.session_state.finder_results = ranked[:20]
                 if not st.session_state.finder_results:
                     st.info("No movies matched all selected genres and the minimum rating. Try different genres or a lower rating.")
 
     if st.session_state.finder_results:
         st.markdown('<div class="section-kicker">CURATED FOR YOUR SEARCH</div>', unsafe_allow_html=True)
         st.markdown('<div class="panel-heading">Your matches</div><p class="panel-copy">A shortlist built around the genres and rating you selected.</p>', unsafe_allow_html=True)
-        for i, (m, score) in enumerate(st.session_state.finder_results[:12]):
+        for i, (m, score) in enumerate(st.session_state.finder_results[:20]):
             display_movie_box(
                 m,
                 score=score,
