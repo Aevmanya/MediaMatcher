@@ -1202,13 +1202,26 @@ else:
             # Preserve TMDB's search relevance instead of reordering by popularity.
             st.subheader("Search Results")
             for i, m in enumerate(results[:10]):
-                display_movie_box(
-                    m,
-                    show_add_button=True,
-                    button_key=f"home_add_{i}",
-                )
+                display_movie_box(m)
+                left_action, spacer_action, right_action = st.columns([1.5, 5, 1.7])
+                with left_action:
+                    if st.button("Add to Favourites", key=f"home_add_{i}"):
+                        already_added = any(
+                            fav["id"] == m["id"]
+                            for fav in st.session_state.favourites
+                        )
+                        if already_added:
+                            st.info("This movie is already in your favourites.")
+                        else:
+                            st.session_state.favourites.append(m)
+                            if not favourite_exists(st.session_state.user_id, m["id"]):
+                                save_favourite(st.session_state.user_id, m)
+                            st.success("Added to your favourites!")
 
-                if st.button("Recommend Similar", key=f"home_rec_{i}"):
+                with right_action:
+                    recommend_clicked = st.button("Recommend Similar", key=f"home_rec_{i}")
+
+                if recommend_clicked:
                     pool = []
                     TARGET_POOL = 50
 
