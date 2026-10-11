@@ -714,23 +714,30 @@ st.markdown(
     [data-testid="stTextInput"] input:focus,[data-testid="stTextArea"] textarea:focus { border-color:#d6a85c; box-shadow:0 0 0 1px #d6a85c; }
     [data-testid="stSelectbox"] [data-baseweb="select"],[data-testid="stMultiSelect"] [data-baseweb="select"] { background:#1c1d22; border-radius:11px; }
     /* Dark cinematic dropdown menus, matching the charcoal-and-gold theme. */
-    [data-baseweb="popover"] [data-baseweb="menu"],
-    [data-baseweb="popover"] [role="listbox"],
-    [data-baseweb="popover"] ul {
+    /* Streamlit's multiselect menu is portalled outside the widget, so target
+       BaseWeb menu/listbox nodes directly rather than requiring a popover parent. */
+    [data-baseweb="menu"],
+    [role="listbox"],
+    [data-baseweb="popover"],
+    [data-baseweb="popover"] > div {
         background:#202126 !important;
-        border:1px solid #3b3632 !important;
+        background-color:#202126 !important;
+        border-color:#3b3632 !important;
         border-radius:12px !important;
         box-shadow:0 14px 34px rgba(0,0,0,.42) !important;
     }
-    [data-baseweb="popover"] [role="option"],
-    [data-baseweb="popover"] li {
-        background:#202126 !important;
+    [data-baseweb="menu"] *,
+    [role="listbox"] *,
+    [role="option"],
+    [data-baseweb="menu"] li {
+        background-color:#202126 !important;
         color:#eee9e0 !important;
     }
-    [data-baseweb="popover"] [role="option"]:hover,
-    [data-baseweb="popover"] li:hover,
-    [data-baseweb="popover"] [aria-selected="true"] {
-        background:#342d24 !important;
+    [role="option"]:hover,
+    [role="option"][aria-selected="true"],
+    [data-baseweb="menu"] li:hover,
+    [data-baseweb="menu"] li[aria-selected="true"] {
+        background-color:#342d24 !important;
         color:#f0c879 !important;
     }
     [data-testid="stMultiSelect"] [data-baseweb="select"] [data-baseweb="tag"] {
