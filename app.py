@@ -456,10 +456,12 @@ def rank_against_single_movie(base_movie, candidates, limit=6):
 
 
 def build_finder_candidates(
-    selected_genres, max_pages=20, min_popularity=0, min_rating=0.01
+    selected_genres, max_pages=100, min_popularity=0, min_rating=0.01,
+    excluded_ids=None, minimum_results=6
 ):
     genres_map = get_genres()
     selected_ids = [genres_map[g] for g in selected_genres if g in genres_map]
+    excluded_ids = set(excluded_ids or [])
     pool = []
     seen = set()
     page = 1
@@ -481,6 +483,7 @@ def build_finder_candidates(
             if (
                 movie_id is None
                 or movie_id in seen
+                or movie_id in excluded_ids
                 or len(set(selected_ids) & set(movie.get("genre_ids", []))) < min(2, len(selected_ids))
                 or movie.get("vote_average", 0) < min_rating
                 or not respects_preferences(movie)
@@ -489,7 +492,7 @@ def build_finder_candidates(
             seen.add(movie_id)
             pool.append(movie)
 
-        if len(pool) >= 300 or not data.get("results"):
+        if len(pool) >= minimum_results or not data.get("results"):
             break
         page += 1
 
@@ -926,14 +929,18 @@ elif st.session_state.route == "Finder":
             st.warning("Select at least 2 genres.")
         else:
             with st.spinner("Building recommendations..."):
-                pool = build_finder_candidates(
-                    selected_genres, max_pages=20, min_rating=min_rating
-                )
                 favourite_ids = {
                     fav.get("id")
                     for fav in st.session_state.favourites
                     if fav.get("id") is not None
                 }
+                pool = build_finder_candidates(
+                    selected_genres,
+                    max_pages=100,
+                    min_rating=min_rating,
+                    excluded_ids=favourite_ids,
+                    minimum_results=6,
+                )
                 selected_ids = {
                     GENRES_MAP[g] for g in selected_genres if g in GENRES_MAP
                 }
