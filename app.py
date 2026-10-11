@@ -231,6 +231,7 @@ with st.sidebar:
             default_index=0,
             styles={
                 "container": {"padding": "8px 0 12px", "background-color": "#17181d", "border-radius": "0", "border": "none"},
+                "menu-title": {"color": "#f0c879", "font-size": "17px", "font-weight": "700", "letter-spacing": "0.04em"},
                 "icon": {"color": "#d6a85c", "font-size": "17px"},
                 "nav-link": {
                     "font-size": "14px",
