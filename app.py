@@ -230,7 +230,7 @@ with st.sidebar:
             icons=["person-circle"],
             default_index=0,
             styles={
-                "container": {"padding": "4px 0", "background-color": "#17181d"},
+                "container": {"padding": "8px 0 12px", "background-color": "#17181d", "border-radius": "0", "border": "none"},
                 "icon": {"color": "#d6a85c", "font-size": "17px"},
                 "nav-link": {
                     "font-size": "14px",
@@ -258,7 +258,7 @@ with st.sidebar:
             icons=["house", "search", "heart", "stars", "calendar-event", "sliders", "person-circle"],
             default_index=default_index,
             styles={
-                "container": {"padding": "4px 0", "background-color": "#17181d"},
+                "container": {"padding": "8px 0 12px", "background-color": "#17181d", "border-radius": "0", "border": "none"},
                 "icon": {"color": "#d6a85c", "font-size": "17px"},
                 "nav-link": {
                     "font-size": "14px",
@@ -573,7 +573,7 @@ st.markdown(
     [data-testid="stSidebar"] [aria-current="page"], [data-testid="stSidebar"] a[aria-selected="true"] { background:#332b20 !important; border-left:3px solid #d6a85c !important; }
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 { color:#f0c879 !important; }
     .stApp::before { content:""; display:block; height:3px; width:100%; background:linear-gradient(90deg,#7b3c42 0%,#d6a85c 52%,#286c68 100%); }
-    /* Sidebar: cover Streamlit's current and legacy DOM wrappers. */
+    /* A cohesive cinema-style sidebar, including Streamlit's nested wrappers. */
     section[data-testid="stSidebar"],
     [data-testid="stSidebar"],
     [data-testid="stSidebar"] > div,
@@ -588,11 +588,26 @@ st.markdown(
         background: #17181d !important;
         background-color: #17181d !important;
         color: #f4f0e8 !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
     }
     [data-testid="stSidebar"]::before,
     [data-testid="stSidebar"]::after { background: #17181d !important; }
-    [data-testid="stSidebar"] .stMarkdown,
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] { background: transparent !important; }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 {
+        color: #f4f0e8 !important;
+        letter-spacing: -0.03em;
+        font-weight: 750;
+        margin-bottom: 0.2rem;
+    }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+        color: #9c9da6 !important;
+        font-size: 0.9rem;
+    }
+    [data-testid="stSidebar"] hr {
+        border-color: #303137 !important;
+        margin: 0.7rem 0 0.9rem !important;
+    }
     [data-testid="stSidebar"] .nav,
     [data-testid="stSidebar"] .nav-pills,
     [data-testid="stSidebar"] .nav-item { background: transparent !important; }
