@@ -976,14 +976,29 @@ elif st.session_state.route == "Recommended":
                 seen.add(m["id"])
                 unique.append(m)
 
+        # Remove saved favourites before candidates are scored or displayed.
+        favourite_ids = {
+            fav.get("id")
+            for fav in st.session_state.favourites
+            if fav.get("id") is not None
+        }
         normal_candidates = [
             m
             for m in unique
-            if respects_preferences(m) and m.get("vote_average", 0) > 0.01
+            if m.get("id") is not None
+            and m.get("id") not in favourite_ids
+            and respects_preferences(m)
+            and m.get("vote_average", 0) > 0.01
         ]
         recs = recommend_from_viewed(
             st.session_state.favourites, normal_candidates, API_KEY
         )
+        # Final guard: never render a film that is already in the favourites list.
+        recs = [
+            (movie, score)
+            for movie, score in recs
+            if movie.get("id") not in favourite_ids
+        ]
 
         st.markdown('<div class="section-kicker">MATCHED TO YOUR TASTE</div>', unsafe_allow_html=True)
         st.markdown('<div class="panel-heading">Your top 10 picks</div><p class="panel-copy">Ranked to help you discover something new without losing the thread of what you enjoy.</p>', unsafe_allow_html=True)
