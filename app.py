@@ -356,8 +356,21 @@ def recommend_from_viewed(favourites, candidates, api_key):
     start_year = preferences.get("start_year", 1885)
     end_year = preferences.get("end_year", 2026)
 
+    # Deduplicate candidate IDs and exclude anything already in the user's favourites.
+    favourite_ids = {
+        movie.get("id") for movie in favourites if movie.get("id") is not None
+    }
+    seen_candidate_ids = set()
+    unique_candidates = []
+    for candidate in candidates:
+        candidate_id = candidate.get("id")
+        if candidate_id is None or candidate_id in favourite_ids or candidate_id in seen_candidate_ids:
+            continue
+        seen_candidate_ids.add(candidate_id)
+        unique_candidates.append(candidate)
+
     scored_movies = []
-    for movie in candidates:
+    for movie in unique_candidates:
         language_ok = (not allowed_languages) or (
             movie.get("original_language") in allowed_languages
         )
@@ -401,19 +414,14 @@ def recommend_from_viewed(favourites, candidates, api_key):
             elif release_year > 2000:
                 score += 1.5
 
+        # Ratings are a modest quality signal, not the main driver of taste matching.
         rating = movie.get("vote_average", 0)
-        if rating > 8:
-            score += 1.5
-        elif 7 <= rating <= 8:
+        if rating > 9:
             score += 1.0
+        elif rating > 7.5:
+            score += 0.5
 
-        popularity = movie.get("popularity", 0)
-        if popularity > 200:
-            score += 6
-        elif popularity > 30:
-            score += 4
-        elif popularity < 15:
-            score -= 2
+        # Popularity is deliberately not scored: avoid pushing blockbusters above better taste matches.
 
         scored_movies.append((movie, score))
 
