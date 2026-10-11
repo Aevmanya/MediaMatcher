@@ -468,8 +468,8 @@ def build_finder_candidates(
         data = tmdb_get(
             "/discover/movie",
             {
-                # TMDB's comma-separated genre filter requires every selected genre.
-                "with_genres": ",".join(map(str, selected_ids)),
+                # Use TMDB's OR syntax so a movie can match any selected genres.
+                "with_genres": "|".join(map(str, selected_ids)),
                 "vote_average.gte": min_rating,
                 "sort_by": "vote_average.desc",
                 "vote_count.gte": 20,
@@ -481,7 +481,7 @@ def build_finder_candidates(
             if (
                 movie_id is None
                 or movie_id in seen
-                or not set(selected_ids).issubset(set(movie.get("genre_ids", [])))
+                or len(set(selected_ids) & set(movie.get("genre_ids", []))) < min(2, len(selected_ids))
                 or movie.get("vote_average", 0) < min_rating
                 or not respects_preferences(movie)
             ):
@@ -937,8 +937,8 @@ elif st.session_state.route == "Finder":
                 selected_ids = {
                     GENRES_MAP[g] for g in selected_genres if g in GENRES_MAP
                 }
-                # Keep only unique, non-favourite movies that meet the chosen genres
-                # and rating threshold. Score only genre overlap and TMDB rating.
+                # Keep unique, non-favourite movies matching at least two selected
+                # genres and meeting the rating threshold. Rank by genre overlap and rating.
                 unique_pool = {}
                 for movie in pool:
                     movie_id = movie.get("id")
@@ -948,7 +948,7 @@ elif st.session_state.route == "Finder":
                         movie_id is None
                         or movie_id in favourite_ids
                         or movie_id in unique_pool
-                        or not selected_ids.issubset(movie_genres)
+                        or len(selected_ids & movie_genres) < min(2, len(selected_ids))
                         or rating < min_rating
                     ):
                         continue
