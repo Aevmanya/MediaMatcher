@@ -572,13 +572,13 @@ st.markdown(
     [data-testid="stAppViewContainer"] { background:#101114 !important; }
     /* Reduce the blank band above the page content, below Streamlit's toolbar. */
     [data-testid="stMain"] .block-container {
-        padding-top: 2.25rem !important;
+        padding-top: 3rem !important;
     }
     [data-testid="stMainBlockContainer"] {
-        padding-top: 2.25rem !important;
+        padding-top: 3rem !important;
     }
     [data-testid="stAppViewContainer"] section.main > div:first-child {
-        padding-top: 2.25rem !important;
+        padding-top: 3rem !important;
     }
     [data-testid="stSidebar"] [aria-current="page"], [data-testid="stSidebar"] a[aria-selected="true"] { background:#332b20 !important; border-left:3px solid #d6a85c !important; }
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 { color:#f0c879 !important; }
