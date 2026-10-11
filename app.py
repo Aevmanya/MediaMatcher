@@ -1237,14 +1237,16 @@ else:
                     st.markdown(
                         f"""
                         <div style="
-                            background-color:#eef6ff;
+                            background:linear-gradient(118deg,#211f25 0%,#292329 58%,#172426 100%);
+                            color:#f5f0e8;
                             padding:20px;
-                            border-radius:12px;
+                            border:1px solid #393137;
+                            border-radius:16px;
                             margin-top:25px;
-                            border-left:6px solid #4a90e2;
+                            border-left:4px solid #e8b85c;
                         ">
-                        <h3>Recommendations</h3>
-                        <p style="color:#555;">Based on <strong>{m.get('title', 'Movie')}</strong></p>
+                        <h3 style="color:#f5f0e8;margin-top:0;">Recommendations</h3>
+                        <p style="color:#c8c0b8;">Based on <strong style="color:#e8b85c;">{m.get('title', 'Movie')}</strong></p>
                         """,
                         unsafe_allow_html=True,
                     )
