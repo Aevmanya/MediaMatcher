@@ -474,7 +474,7 @@ def build_finder_candidates(
                 "with_genres": "|".join(map(str, selected_ids)),
                 "vote_average.gte": min_rating,
                 "sort_by": "vote_average.desc",
-                "vote_count.gte": 50,
+                "vote_count.gte": 20,
                 "page": page,
             },
         )
@@ -486,7 +486,6 @@ def build_finder_candidates(
                 or movie_id in excluded_ids
                 or len(set(selected_ids) & set(movie.get("genre_ids", []))) < min(2, len(selected_ids))
                 or movie.get("vote_average", 0) < min_rating
-                or movie.get("popularity", 0) < min_popularity
                 or not respects_preferences(movie)
             ):
                 continue
@@ -938,7 +937,6 @@ elif st.session_state.route == "Finder":
                 pool = build_finder_candidates(
                     selected_genres,
                     max_pages=100,
-                    min_popularity=5.0,
                     min_rating=min_rating,
                     excluded_ids=favourite_ids,
                     minimum_results=6,
