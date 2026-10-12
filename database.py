@@ -54,6 +54,18 @@ db = mysql.connector.connect(**_read_mysql_config(), connection_timeout=10)
 cursor = db.cursor()
 
 
+def _execute(sql, params=None):
+    """Reconnect after idle/stale MySQL connections and execute a query."""
+    global db, cursor
+    try:
+        db.ping(reconnect=True, attempts=3, delay=1)
+    except mysql.connector.Error:
+        # Recreate the connection if Connector/Python cannot recover it.
+        db = mysql.connector.connect(**_read_mysql_config(), connection_timeout=10)
+    cursor = db.cursor()
+    cursor.execute(sql, params or ())
+
+
 _HASH_ALGORITHM = "pbkdf2_sha256"
 _HASH_ITERATIONS = 260_000
 
