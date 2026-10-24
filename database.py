@@ -1,7 +1,7 @@
-"""Database helpers for MediaMatcher.
+"""PostgreSQL database helpers for MediaMatcher.
 
-Configure connection details in .streamlit/secrets.toml locally and in your
-Streamlit Community Cloud app settings when deployed. Never commit secrets.
+Configure connection details in Streamlit secrets under [postgresql].
+Never commit database credentials.
 """
 
 import base64
@@ -10,61 +10,101 @@ import hmac
 import os
 import secrets as _secrets
 
-import mysql.connector
+import psycopg2
 import streamlit as st
 
 
-def _read_mysql_config():
-    """Read DB settings from Streamlit secrets, with environment fallbacks."""
+def _read_postgresql_config():
+    """Read PostgreSQL settings from Streamlit secrets or environment."""
     try:
-        section = st.secrets.get("mysql", {})
+        section = st.secrets.get("postgresql", {})
     except (FileNotFoundError, RuntimeError):
         section = {}
 
     def value(key, env_key=None, default=None):
-        env_key = env_key or f"MYSQL_{key.upper()}"
+        env_key = env_key or f"POSTGRESQL_{key.upper()}"
         return section.get(key, os.environ.get(env_key, default))
 
     config = {
         "host": value("host"),
         "user": value("user"),
         "password": value("password"),
-        "database": value("database", default="movie_recommender"),
-        "port": int(value("port", default=3306)),
+        "dbname": value("database", default="defaultdb"),
+        "port": int(value("port", default=5432)),
+        "sslmode": value("sslmode", default="require"),
+        "connect_timeout": 10,
     }
-    missing = [key for key in ("host", "user", "password", "database") if not config[key]]
+    missing = [key for key in ("host", "user", "password", "dbname") if not config[key]]
     if missing:
         raise RuntimeError(
-            "MySQL configuration is missing: " + ", ".join(missing) +
-            ". Add a [mysql] section to .streamlit/secrets.toml or configure "
-            "the corresponding MYSQL_* environment variables."
+            "PostgreSQL configuration is missing: " + ", ".join(missing) +
+            ". Add a [postgresql] section to Streamlit secrets or configure "
+            "the corresponding POSTGRESQL_* environment variables."
         )
-
-    # If your database provider supplies a CA certificate, put its path in the
-    # ssl_ca setting and enable certificate/hostname verification.
-    ssl_ca = value("ssl_ca", default=None)
-    if ssl_ca:
-        config["ssl_ca"] = ssl_ca
-        config["ssl_verify_cert"] = True
-        config["ssl_verify_identity"] = True
     return config
 
 
-db = mysql.connector.connect(**_read_mysql_config(), connection_timeout=10)
+def _connect():
+    return psycopg2.connect(**_read_postgresql_config())
+
+
+db = _connect()
 cursor = db.cursor()
 
 
+def _ensure_schema():
+    """Create the app's tables if this is a new, empty database."""
+    global cursor
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            user_id SERIAL PRIMARY KEY,
+            email TEXT NOT NULL UNIQUE,
+            phone TEXT,
+            password TEXT NOT NULL,
+            languages TEXT,
+            start_year INTEGER,
+            end_year INTEGER,
+            genres TEXT,
+            favourite_movies TEXT
+        )
+        """
+    )
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS favourites (
+            favourite_id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+            movie_id BIGINT NOT NULL,
+            movie_title TEXT NOT NULL,
+            UNIQUE (user_id, movie_id)
+        )
+        """
+    )
+    db.commit()
+
+
 def _execute(sql, params=None):
-    """Reconnect after idle/stale MySQL connections and execute a query."""
+    """Reconnect if the PostgreSQL connection was closed, then execute SQL."""
     global db, cursor
     try:
-        db.ping(reconnect=True, attempts=3, delay=1)
-    except mysql.connector.Error:
-        # Recreate the connection if Connector/Python cannot recover it.
-        db = mysql.connector.connect(**_read_mysql_config(), connection_timeout=10)
-    cursor = db.cursor()
-    cursor.execute(sql, params or ())
+        if db.closed:
+            db = _connect()
+        cursor = db.cursor()
+        cursor.execute(sql, params or ())
+    except psycopg2.Error:
+        try:
+            db.rollback()
+        except psycopg2.Error:
+            pass
+        if not db.closed:
+            raise
+        db = _connect()
+        cursor = db.cursor()
+        cursor.execute(sql, params or ())
 
+
+_ensure_schema()
 
 _HASH_ALGORITHM = "pbkdf2_sha256"
 _HASH_ITERATIONS = 260_000
@@ -91,31 +131,33 @@ def _verify_password(password, stored):
         actual = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, int(iterations))
         return hmac.compare_digest(actual, expected)
     except (ValueError, TypeError):
-        # Legacy plaintext passwords are intentionally not accepted by this
-        # deployment-ready version. Use a fresh hosted database or reset users.
         return False
 
 
 def create_user(email, phone, password):
-    sql = "INSERT INTO users(email, phone, password) VALUES (%s, %s, %s)"
-    cursor.execute(sql, (email, phone, _hash_password(password)))
+    _execute(
+        "INSERT INTO users(email, phone, password) VALUES (%s, %s, %s)",
+        (email, phone, _hash_password(password)),
+    )
     db.commit()
 
 
 def get_user(email):
-    cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+    _execute("SELECT * FROM users WHERE email=%s", (email,))
     return cursor.fetchone()
 
 
 def update_preferences(user_id, languages, start_year, end_year, genres, favourite_movies):
-    sql = """UPDATE users SET languages=%s, start_year=%s, end_year=%s,
-             genres=%s, favourite_movies=%s WHERE user_id=%s"""
-    cursor.execute(sql, (languages, start_year, end_year, genres, favourite_movies, user_id))
+    _execute(
+        """UPDATE users SET languages=%s, start_year=%s, end_year=%s,
+           genres=%s, favourite_movies=%s WHERE user_id=%s""",
+        (languages, start_year, end_year, genres, favourite_movies, user_id),
+    )
     db.commit()
 
 
 def load_preferences(user_id):
-    cursor.execute(
+    _execute(
         """SELECT languages, start_year, end_year, genres, favourite_movies
            FROM users WHERE user_id=%s""",
         (user_id,),
@@ -124,15 +166,16 @@ def load_preferences(user_id):
 
 
 def save_favourite(user_id, movie):
-    cursor.execute(
-        "INSERT INTO favourites(user_id, movie_id, movie_title) VALUES (%s, %s, %s)",
+    _execute(
+        "INSERT INTO favourites(user_id, movie_id, movie_title) VALUES (%s, %s, %s) "
+        "ON CONFLICT (user_id, movie_id) DO NOTHING",
         (user_id, movie["id"], movie["title"]),
     )
     db.commit()
 
 
 def load_favourites(user_id):
-    cursor.execute(
+    _execute(
         "SELECT movie_id, movie_title FROM favourites WHERE user_id=%s",
         (user_id,),
     )
@@ -140,7 +183,7 @@ def load_favourites(user_id):
 
 
 def login_user(email, password):
-    cursor.execute("SELECT user_id, email, password FROM users WHERE email=%s", (email,))
+    _execute("SELECT user_id, email, password FROM users WHERE email=%s", (email,))
     user = cursor.fetchone()
     if user and _verify_password(password, user[2]):
         return {"user_id": user[0], "email": user[1]}
@@ -148,7 +191,7 @@ def login_user(email, password):
 
 
 def favourite_exists(user_id, movie_id):
-    cursor.execute(
+    _execute(
         "SELECT 1 FROM favourites WHERE user_id=%s AND movie_id=%s",
         (user_id, movie_id),
     )
@@ -156,7 +199,7 @@ def favourite_exists(user_id, movie_id):
 
 
 def remove_favourite(user_id, movie_id):
-    cursor.execute(
+    _execute(
         "DELETE FROM favourites WHERE user_id=%s AND movie_id=%s",
         (user_id, movie_id),
     )
@@ -164,7 +207,7 @@ def remove_favourite(user_id, movie_id):
 
 
 def favourite_count(movie_id):
-    cursor.execute(
+    _execute(
         "SELECT COUNT(DISTINCT user_id) FROM favourites WHERE movie_id=%s",
         (movie_id,),
     )
