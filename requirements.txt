@@ -3,3 +3,4 @@ streamlit-option-menu
 requests
 mysql-connector-python
 urllib3
+psycopg2-binary\n
